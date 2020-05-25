@@ -43,11 +43,8 @@ class QYTCiscoSSH:
         finally:
             self.client.close()
 
-    def config(self, config_cmds):
+    def config(self, config_cmds, enable='Cisc0123', verbose=True, wait_time=2):
         try:
-            enable = 'Cisc0123'
-            wait_time = 2
-            verbose = True
             chan = self.client.invoke_shell()
             chan.send('term len 0\n')
             time.sleep(1)
@@ -77,6 +74,6 @@ if __name__ == '__main__':
     password = 'Cisc0123'
     client1 = QYTCiscoSSH(hostname=r1, username=username, password=password)
     # print(client1.show_run())
-    cmds = ['show ver', 'show ip int br', '']
+    cmds = ['show ver', 'configure terminal', 'router ospf 1', 'network 1.1.1.1 0.0.0.0 area 0', '']
     # print(client1.show(cmds))
     client1.config(cmds)

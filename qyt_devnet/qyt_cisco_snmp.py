@@ -25,8 +25,14 @@ class QYTCiscoSNMP:
     def cpu_usage(self):
         return int(snmpv2_get(self.ip, self.ro, "1.3.6.1.4.1.9.9.109.1.1.1.1.3.7", port=self.port)[1])
 
-    def mem_usage(self):
+    def mem_usage_used(self):
         return int(snmpv2_get(self.ip, self.ro, "1.3.6.1.4.1.9.9.109.1.1.1.1.12.7", port=self.port)[1])
+
+    def mem_usage_free(self):
+        return int(snmpv2_get(self.ip, self.ro, "1.3.6.1.4.1.9.9.109.1.1.1.1.13.7", port=self.port)[1])
+
+    def mem_usage_percent(self):
+        return int(self.mem_usage_used()) / (int(self.mem_usage_used()) + int(self.mem_usage_free())) * 100
 
     def get_ifs(self):
         return [if_name[1] for if_name in snmpv2_getnext(self.ip, self.ro, "1.3.6.1.2.1.2.2.1.2", port=161)]
@@ -53,8 +59,12 @@ if __name__ == '__main__':
     print(snmp_client.location())
     # CPU利用率
     print(snmp_client.cpu_usage())
-    # 内存利用率
-    print(snmp_client.mem_usage())
+    # 内存使用
+    print(snmp_client.mem_usage_used())
+    # 内存空闲
+    print(snmp_client.mem_usage_free())
+    # 内存使用率
+    print('{:.1f}'.format(snmp_client.mem_usage_percent()))
     # 接口清单
     print(snmp_client.get_ifs())
     # 接口速率
